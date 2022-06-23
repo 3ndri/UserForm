@@ -2,6 +2,22 @@
   text-align: center;
 }
 
+.ant-form {
+  &-item-label {
+    width: 100%;
+    label {
+      width: 100%;
+    }
+    p {
+      margin-bottom: 0;
+      margin-right: 15px;
+    }
+    div {
+      width: 100%;
+    }
+  }
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
