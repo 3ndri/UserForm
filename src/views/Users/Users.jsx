@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import AddUserModal from "../../components/AddUserModal";
 import EditUserModal from "../..//components/EditUserModal";
 import UsersTable from "../../components/UsersTable";
@@ -6,25 +6,16 @@ import { Button, Space, Modal, message } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import {
-  addUser,
-  updateUser,
   deleteUser,
 } from "../../redux/reducer";
 
 export default () => {
   const [selectedUser, setSelectedUser] = useState(null);
-  const [userEdit, setUserEdit] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isEditVisible, setIsEditVisible] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
   const users = useSelector((state) => state.users);
   const dispatch = useDispatch();
-  let editingStudent = [];
 
-  useEffect(() => {
-    setUserEdit(selectedUser);
-  }, [selectedUser])
-  console.log('user edit', userEdit)
   const columns = [
     {
       title: "ID",
@@ -72,9 +63,7 @@ export default () => {
       ),
     },
   ];
-  console.log("viss", isVisible);
-  console.log("editing", editingStudent);
-  console.log("selctedddddddddddddasdas", selectedUser);
+
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -97,10 +86,11 @@ export default () => {
         }}
       />
       <EditUserModal
-        selectedUser={userEdit}
+        selectedUser={selectedUser}
         isVisible={isEditVisible}
         onCancel={() => {
           setIsEditVisible(false);
+          setSelectedUser(null);
         }}
       />
     </div>

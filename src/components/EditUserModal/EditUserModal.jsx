@@ -14,8 +14,8 @@ import PlacesAutocomplete, {
   getLatLng,
 } from "react-places-autocomplete";
 import { useDispatch, useSelector } from "react-redux";
-import { addUser, updateUser } from "../../redux/reducer";
-import React, { useState, useEffect } from "react";
+import { updateUser } from "../../redux/reducer";
+import React, { useState } from "react";
 
 export default ({ isVisible, onCancel, selectedUser }) => {
   const [form] = Form.useForm();
@@ -23,16 +23,12 @@ export default ({ isVisible, onCancel, selectedUser }) => {
   const [address, setAddress] = React.useState("");
   const [coordinates, setCoordinates] = React.useState({
     lat: null,
-    lng: null
+    lng: null,
   });
-  const users = useSelector((state) => state.users);
-  const usersAmount = users.length;
 
   const dispatch = useDispatch();
-  console.log("users", users);
-  console.log("amount", usersAmount);
 
-  const handleSelect = async value => {
+  const handleSelect = async (value) => {
     const results = await geocodeByAddress(value);
     const latLng = await getLatLng(results[0]);
     setAddress(value);
@@ -44,18 +40,8 @@ export default ({ isVisible, onCancel, selectedUser }) => {
     try {
       formData = await form.validateFields();
       formData.id = selectedUser && selectedUser.id;
-      console.log("data", formData);
-      dispatch(addUser(formData));
+      dispatch(updateUser(formData));
       message.success("User Updated!");
-      form.setFieldsValue({
-        fullName: "",
-        username: "",
-        email: "",
-        phoneNr: "",
-        address: "",
-        zipCode: '',
-        city: '',
-      });
       onCancel();
     } catch (error) {
       console.log(error);
@@ -85,8 +71,15 @@ export default ({ isVisible, onCancel, selectedUser }) => {
         form={form}
         {...layout}
         initialValues={{
-          fullName: selectedUser && selectedUser.fullName || '',
-          email: selectedUser?.email || ''
+          fullName: selectedUser?.fullName || "",
+          username: selectedUser?.username || "",
+          email: selectedUser?.email || "",
+          phoneNr: selectedUser?.phoneNr || "",
+          address: selectedUser?.address || "",
+          city: selectedUser?.city || "",
+          zipCode: selectedUser?.zipCode || "",
+          latitude: selectedUser?.coordinates.lat || "",
+          longitude: selectedUser?.coordinates.lng || "",
         }}
       >
         <Row gutter={16}>
@@ -102,7 +95,10 @@ export default ({ isVisible, onCancel, selectedUser }) => {
                 },
               ]}
             >
-              <Input placeholder="John Doe" />
+              <Input
+                placeholder="John Doe"
+                value={selectedUser?.fullName || ""}
+              />
             </Form.Item>
             <Form.Item
               requiredMark="optional"
@@ -129,7 +125,10 @@ export default ({ isVisible, onCancel, selectedUser }) => {
                 },
               ]}
             >
-              <Input placeholder="johndoe@example.com" />
+              <Input
+                placeholder="johndoe@example.com"
+                value={selectedUser?.email || ""}
+              />
             </Form.Item>
             <Form.Item
               requiredMark="optional"
@@ -153,9 +152,7 @@ export default ({ isVisible, onCancel, selectedUser }) => {
               requiredMark="optional"
               name="address"
               label={
-                <div
-                  style={{ display: "flex" }}
-                >
+                <div style={{ display: "flex" }}>
                   <p>Address</p>
                   <Checkbox onChange={() => setIsChecked(!isChecked)}>
                     Use Google Location
@@ -207,12 +204,12 @@ export default ({ isVisible, onCancel, selectedUser }) => {
                     {isChecked && (
                       <Row gutter={16}>
                         <Col span={12}>
-                          <Form.Item label="Latitude" name='latitude'>
+                          <Form.Item label="Latitude" name="latitude">
                             <Input />
                           </Form.Item>
                         </Col>
                         <Col span={12}>
-                          <Form.Item label='Longitude' name='longitude'>
+                          <Form.Item label="Longitude" name="longitude">
                             <Input />
                           </Form.Item>
                         </Col>

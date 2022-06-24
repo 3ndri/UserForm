@@ -4,7 +4,6 @@ import {
   Button,
   Row,
   Input,
-  InputNumber,
   Col,
   message,
   Checkbox,
@@ -15,7 +14,7 @@ import PlacesAutocomplete, {
 } from "react-places-autocomplete";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../../redux/reducer";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 export default ({ isVisible, onCancel }) => {
   const [form] = Form.useForm();
@@ -23,16 +22,14 @@ export default ({ isVisible, onCancel }) => {
   const [address, setAddress] = React.useState("");
   const [coordinates, setCoordinates] = React.useState({
     lat: null,
-    lng: null
+    lng: null,
   });
   const users = useSelector((state) => state.users);
   const usersAmount = users.length;
 
   const dispatch = useDispatch();
-  console.log("users", users);
-  console.log("amount", usersAmount);
 
-  const handleSelect = async value => {
+  const handleSelect = async (value) => {
     const results = await geocodeByAddress(value);
     const latLng = await getLatLng(results[0]);
     setAddress(value);
@@ -44,7 +41,7 @@ export default ({ isVisible, onCancel }) => {
     try {
       formData = await form.validateFields();
       formData.id = usersAmount + 1;
-      console.log("data", formData);
+      formData.coordinates = coordinates;
       dispatch(addUser(formData));
       message.success("User Created!");
       form.setFieldsValue({
@@ -53,10 +50,10 @@ export default ({ isVisible, onCancel }) => {
         email: "",
         phoneNr: "",
         address: "",
-        zipCode: '',
-        city: '',
-        latitude: '',
-        longitude: ''
+        zipCode: "",
+        city: "",
+        latitude: "",
+        longitude: "",
       });
       onCancel();
     } catch (error) {
@@ -81,12 +78,7 @@ export default ({ isVisible, onCancel }) => {
         </Button>
       }
     >
-      <Form
-        layout={"vertical"}
-        colon={false}
-        form={form}
-        {...layout}
-      >
+      <Form layout={"vertical"} colon={false} form={form} {...layout}>
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
@@ -151,9 +143,7 @@ export default ({ isVisible, onCancel }) => {
               requiredMark="optional"
               name="address"
               label={
-                <div
-                  style={{ display: "flex" }}
-                >
+                <div style={{ display: "flex" }}>
                   <p>Address</p>
                   <Checkbox onChange={() => setIsChecked(!isChecked)}>
                     Use Google Location
@@ -205,13 +195,27 @@ export default ({ isVisible, onCancel }) => {
                     {isChecked && (
                       <Row gutter={16}>
                         <Col span={12}>
-                          <Form.Item label="Latitude" name='latitude'>
-                            <Input />
+                          <Form.Item label="Latitude" name="latitude">
+                            <Input
+                              onChange={(e) =>
+                                setCoordinates({
+                                  ...coordinates,
+                                  lat: e.target.value,
+                                })
+                              }
+                            />
                           </Form.Item>
                         </Col>
                         <Col span={12}>
-                          <Form.Item label='Longitude' name='longitude'>
-                            <Input />
+                          <Form.Item label="Longitude" name="longitude">
+                            <Input
+                              onChange={(e) =>
+                                setCoordinates({
+                                  ...coordinates,
+                                  lng: e.target.value,
+                                })
+                              }
+                            />
                           </Form.Item>
                         </Col>
                       </Row>
